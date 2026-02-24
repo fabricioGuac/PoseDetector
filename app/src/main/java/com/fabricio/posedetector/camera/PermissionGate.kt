@@ -1,4 +1,4 @@
-package com.fabricio.posedetector.ui
+package com.fabricio.posedetector.camera
 
 import android.Manifest
 import android.content.pm.PackageManager

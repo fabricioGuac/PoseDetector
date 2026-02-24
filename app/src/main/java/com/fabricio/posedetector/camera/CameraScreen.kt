@@ -1,4 +1,4 @@
-package com.fabricio.posedetector.ui
+package com.fabricio.posedetector.camera
 
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis

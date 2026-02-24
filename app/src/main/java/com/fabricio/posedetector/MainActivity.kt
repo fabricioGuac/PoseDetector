@@ -4,8 +4,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import com.fabricio.posedetector.pose.PoseDetector
-import com.fabricio.posedetector.ui.CameraScreen
-import com.fabricio.posedetector.ui.PermissionGate
+import com.fabricio.posedetector.camera.CameraScreen
+import com.fabricio.posedetector.camera.PermissionGate
 
 class MainActivity : ComponentActivity(){
 

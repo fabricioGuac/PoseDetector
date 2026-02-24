@@ -8,6 +8,9 @@ import com.google.mediapipe.tasks.core.BaseOptions
 import com.google.mediapipe.tasks.vision.core.RunningMode
 import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarker
 import androidx.core.graphics.createBitmap
+import com.fabricio.posedetector.detection.filter.LandmarkerFilter
+import com.fabricio.posedetector.detection.interpreter.PoseInterpreter
+import com.fabricio.posedetector.detection.poses.HandUpPose
 import com.google.mediapipe.framework.image.BitmapImageBuilder
 
 /**
@@ -19,7 +22,14 @@ import com.google.mediapipe.framework.image.BitmapImageBuilder
 */
 class PoseDetector(context: Context) {
     private val poseLandmarker : PoseLandmarker // Instance of the class that performs pose landmarks detection on images
-    private var handsUpPreviously = false // Flag to keep track of the last hands up state for the test pose
+    // Filters raw mediapipe landmarks based on visibility and converts them into our PoseFrame model
+    private val filter = LandmarkerFilter()
+    // Interprets a filtered PoseFrame and checks it against the pose registry
+    private val interpreter = PoseInterpreter(
+        listOf(
+            HandUpPose()
+        )
+    )
 
     init {
 
@@ -35,39 +45,23 @@ class PoseDetector(context: Context) {
             .setBaseOptions(baseOptions)
             .setRunningMode(RunningMode.LIVE_STREAM)
             .setResultListener { result, input ->
-                // TODO: Move pose interpretation logic into a separate class
-                // Simple arms up detection for debugging
+                // Ensure the landmarks are being read, else stops processing
+                if (result.landmarks().isEmpty()) return@setResultListener
 
-                // Ensures the landmarks are being read
-                if (result.landmarks().isNotEmpty()) {
+                val rawLandmarks = result.landmarks()[0] // Retrieves the 33 pose landmarks
 
-                    val firstPose = result.landmarks()[0] // Retrieves the 33 pose landmarks
+                // Filters the landmarks with low visibility and converts them into our PoseFrame model
+                // If nothing passes the filter skips the frame
+                val frame = filter.filter(rawLandmarks) ?: return@setResultListener
 
-                    // Ensures the expected landmark indices exist (right wrist index = 16)
-                    if (firstPose.size >= 17) {
+                // Pases the filtered PoseFrame to the interpreter and checks if it matched a registered pose
+                val matchedPose = interpreter.interpret(frame)
 
-                        // Retrieves the landmarks needed for the test pose
-                        val leftShoulder = firstPose[11]
-                        val rightShoulder = firstPose[12]
-                        val leftWrist = firstPose[15]
-                        val rightWrist = firstPose[16]
-
-                        // Check the positions (0 is top and 1 bottom of the image respectively)
-                        val leftHandUp = leftWrist.y() < leftShoulder.y()
-                        val rightHandUp = rightWrist.y() < rightShoulder.y()
-
-                        // If both hands are up and that it is not repeating logs from the last read logs the debug message
-                        val handsUpNow = leftHandUp && rightHandUp
-                        if (handsUpNow && !handsUpPreviously) {
-                            Log.d("PoseTrigger", "YAAAAAAAAAAAAAYYYYYYY!")
-                        }
-                        // Updates the flag
-                        handsUpPreviously = handsUpNow
-                        Log.d("DEBUG",
-                            "LW:${leftWrist.y()} LS:${leftShoulder.y()} RW:${rightWrist.y()} RS:${rightShoulder.y()}")
-
-                    }
+                // If any match log the name of the matched pose
+                matchedPose?.let {
+                    Log.d("PoseTrigger", "Matched pose: ${it.name}")
                 }
+
             }
             .setErrorListener { error ->
                 Log.d("Pose", error.message ?: "Error in the pose options")
