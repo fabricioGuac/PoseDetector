@@ -9,7 +9,7 @@ import com.fabricio.posedetector.detection.model.PoseFrame
  * 1) A unique name
  * 2) The logic required to determine if a given PoseFrame matches it
  *
- * This allows the oseInterpreter to evaluate multiple poses ina clean and extensible way
+ * This allows the PoseInterpreter to evaluate multiple poses ina clean and extensible way
  */
 interface PoseDefinition {
     val name: String

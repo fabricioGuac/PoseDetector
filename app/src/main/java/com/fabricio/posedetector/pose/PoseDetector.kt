@@ -10,8 +10,14 @@ import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarker
 import androidx.core.graphics.createBitmap
 import com.fabricio.posedetector.detection.filter.LandmarkerFilter
 import com.fabricio.posedetector.detection.interpreter.PoseInterpreter
+import com.fabricio.posedetector.detection.model.PoseFrame
 import com.fabricio.posedetector.detection.poses.HandUpPose
+import com.fabricio.posedetector.detection.poses.JosukeHipPose
+import com.fabricio.posedetector.detection.poses.KoichiPose
+import com.fabricio.posedetector.util.PoseLogger
 import com.google.mediapipe.framework.image.BitmapImageBuilder
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 /**
  Class that wraps MediaPipe's PoseLandmarker and handles:
@@ -21,13 +27,20 @@ import com.google.mediapipe.framework.image.BitmapImageBuilder
  * - Emitting raw landmark data to higher-level pose evaluation logic (later)
 */
 class PoseDetector(context: Context) {
+    // Internal mutable state that stores the most recently processed PoseFrame
+    private val _currentFrame = MutableStateFlow<PoseFrame?>(null)
+    // Public read-only stream exposing the latest detected PoseFrame
+    // CameraScreen collects this state to receive updates and draw the skeleton overlay whenever a new frame is processed
+    val currentFrame: StateFlow<PoseFrame?> = _currentFrame
     private val poseLandmarker : PoseLandmarker // Instance of the class that performs pose landmarks detection on images
     // Filters raw mediapipe landmarks based on visibility and converts them into our PoseFrame model
     private val filter = LandmarkerFilter()
     // Interprets a filtered PoseFrame and checks it against the pose registry
     private val interpreter = PoseInterpreter(
         listOf(
-            HandUpPose()
+            HandUpPose(),
+            JosukeHipPose(),
+            KoichiPose()
         )
     )
 
@@ -53,6 +66,11 @@ class PoseDetector(context: Context) {
                 // Filters the landmarks with low visibility and converts them into our PoseFrame model
                 // If nothing passes the filter skips the frame
                 val frame = filter.filter(rawLandmarks) ?: return@setResultListener
+
+                // Update the current frame so any UI observing the StateFlow (such as the skeleton overlay) receives the latest landmarks
+                _currentFrame.value = frame
+                // Log landmark data for debugging and pose calibration
+                PoseLogger.logFrame(frame)
 
                 // Pases the filtered PoseFrame to the interpreter and checks if it matched a registered pose
                 val matchedPose = interpreter.interpret(frame)
