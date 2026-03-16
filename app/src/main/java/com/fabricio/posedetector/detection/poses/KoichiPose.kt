@@ -22,23 +22,23 @@ class KoichiPose : PoseDefinition {
         // Left arm: elbow bent roughly at a right angle (~90°)
         // creating the characteristic lifted arm position
         val lArmAngle = calculateAngle(lShou, lElbo, lWris)
-        val lArmValid = lArmAngle in 75.0..105.0
+        val lArmValid = lArmAngle in 60.0..130.0
 
         // Right arm: more open arm position with a wider angle giving the asymmetric look
         val rArmAngle = calculateAngle(rShou, rElbo, rWris)
-        val rArmValid = rArmAngle in 65.0..163.0
+        val rArmValid = rArmAngle in 65.0..170.0
 
         // Left side body angle: ensures the arms is lifted away from the torso
         val lBodyAngle = calculateAngle(lElbo, lShou, lHip)
-        val lBodyValid = lBodyAngle in 55.0..85.0
+        val lBodyValid = lBodyAngle in 40.0..110.0
 
         // Right side body angle: ensures arm is raused relative to the torso
         val rBodyAngle = calculateAngle(rElbo, rShou, rHip)
-        val rBodyValid = rBodyAngle in 55.0..85.0
+        val rBodyValid = rBodyAngle in 40.0..110.0
 
         // Body orientation: ensures the body is slightly rotated
         // The left shoulder being closer to the camera indicates the pose is facing the right direction
-        val orientationValid = lShou.z < rShou.z
+        val orientationValid = lShou.z < (rShou.z + 0.05)
 
         return lArmValid && rArmValid &&
                 lBodyValid && rBodyValid && orientationValid

@@ -11,9 +11,16 @@ import androidx.core.graphics.createBitmap
 import com.fabricio.posedetector.detection.filter.LandmarkerFilter
 import com.fabricio.posedetector.detection.interpreter.PoseInterpreter
 import com.fabricio.posedetector.detection.model.PoseFrame
-import com.fabricio.posedetector.detection.poses.HandUpPose
+import com.fabricio.posedetector.detection.poses.DioKneePose
+import com.fabricio.posedetector.detection.poses.GiornoShirtPullPose
+import com.fabricio.posedetector.detection.poses.JolyneArakiPose
+import com.fabricio.posedetector.detection.poses.JonathanHandFacePose
+import com.fabricio.posedetector.detection.poses.JosephPose
 import com.fabricio.posedetector.detection.poses.JosukeHipPose
+import com.fabricio.posedetector.detection.poses.JotaroPointPose
+import com.fabricio.posedetector.detection.poses.KakyionPose
 import com.fabricio.posedetector.detection.poses.KoichiPose
+import com.fabricio.posedetector.detection.poses.RohanHandsUpPose
 import com.fabricio.posedetector.util.PoseLogger
 import com.google.mediapipe.framework.image.BitmapImageBuilder
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -38,9 +45,16 @@ class PoseDetector(context: Context) {
     // Interprets a filtered PoseFrame and checks it against the pose registry
     private val interpreter = PoseInterpreter(
         listOf(
-            HandUpPose(),
             JosukeHipPose(),
-            KoichiPose()
+            KoichiPose(),
+            JolyneArakiPose(),
+            JotaroPointPose(),
+            JosephPose(),
+            JonathanHandFacePose(),
+            RohanHandsUpPose(),
+            GiornoShirtPullPose(),
+            KakyionPose(),
+            DioKneePose()
         )
     )
 
