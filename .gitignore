@@ -8,3 +8,6 @@
 .externalNativeBuild
 .cxx
 local.properties
+*.mp3
+*.png
+*.webp

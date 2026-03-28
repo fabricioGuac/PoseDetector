@@ -1,11 +1,14 @@
 package com.fabricio.posedetector.detection.poses
 
+import com.fabricio.posedetector.R
 import com.fabricio.posedetector.detection.model.PoseFrame
 import com.fabricio.posedetector.util.calculateAngle
 import kotlin.math.abs
 
 class RohanHandsUpPose : PoseDefinition {
     override val name = "Rohan hands above head pose"
+    override val imageRes = R.drawable.rohan_hands_up_pose
+    override val audioRes = R.raw.rohan_hands_up_pose
 
     override fun matches(frame: PoseFrame): Boolean {
         val lm = frame.landmarks

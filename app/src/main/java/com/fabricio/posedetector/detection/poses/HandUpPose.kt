@@ -1,5 +1,6 @@
 package com.fabricio.posedetector.detection.poses
 
+import com.fabricio.posedetector.R
 import com.fabricio.posedetector.detection.model.PoseFrame
 
 // Simple pose definition  where both wrists are above their respective shoulders
@@ -12,6 +13,8 @@ import com.fabricio.posedetector.detection.model.PoseFrame
 // but the exact cause has not been fully verified yet.
 class HandUpPose : PoseDefinition {
     override val name = "HandsUp"
+    override val imageRes = R.drawable.dio_knee_pose
+    override val audioRes = R.raw.dio_knee_pose
 
     override fun matches(frame: PoseFrame): Boolean {
         val leftShoulder = frame.landmarks[11] ?: return false

@@ -1,10 +1,13 @@
 package com.fabricio.posedetector.detection.poses
 
+import com.fabricio.posedetector.R
 import com.fabricio.posedetector.detection.model.PoseFrame
 import com.fabricio.posedetector.util.calculateAngle
 
 class DioKneePose : PoseDefinition {
     override val name = "Dio knee up pose"
+    override val imageRes = R.drawable.dio_knee_pose
+    override val audioRes = R.raw.dio_knee_pose
 
     override fun matches(frame: PoseFrame): Boolean {
 

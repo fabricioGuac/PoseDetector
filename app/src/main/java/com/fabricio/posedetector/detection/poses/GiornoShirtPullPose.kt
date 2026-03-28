@@ -1,11 +1,14 @@
 package com.fabricio.posedetector.detection.poses
 
+import com.fabricio.posedetector.R
 import com.fabricio.posedetector.detection.model.PoseFrame
 import com.fabricio.posedetector.util.calculateAngle
 import kotlin.math.abs
 
 class GiornoShirtPullPose : PoseDefinition {
     override val name = "Giorno shirt pull pose"
+    override val imageRes = R.drawable.giorno_shirt_pull_pose
+    override val audioRes = R.raw.giorno_shirt_pull_pose
 
     override fun matches(frame: PoseFrame): Boolean {
         val lm = frame.landmarks

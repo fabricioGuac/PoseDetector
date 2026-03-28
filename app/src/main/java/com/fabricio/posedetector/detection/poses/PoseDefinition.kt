@@ -13,6 +13,9 @@ import com.fabricio.posedetector.detection.model.PoseFrame
  */
 interface PoseDefinition {
     val name: String
+    val imageRes: Int
+    val audioRes : Int
+
     // Returns true if the given frame satisfies the geometric conditions for the pose
     fun matches(frame: PoseFrame): Boolean
 }

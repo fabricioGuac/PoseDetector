@@ -1,11 +1,15 @@
 package com.fabricio.posedetector.detection.poses
 
+import com.fabricio.posedetector.R
 import com.fabricio.posedetector.detection.model.PoseFrame
 import com.fabricio.posedetector.util.calculateAngle
 import kotlin.math.abs
 
 class KakyionPose : PoseDefinition {
     override val name = "Kakyion pose"
+    override val imageRes = R.drawable.kakyion_pose
+    override val audioRes = R.raw.kakyion_pose
+
     override fun matches(frame: PoseFrame): Boolean {
         val lm = frame.landmarks
         val lShou = lm[11] ?: return false

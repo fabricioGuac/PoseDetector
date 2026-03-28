@@ -1,5 +1,6 @@
 package com.fabricio.posedetector.detection.poses
 
+import com.fabricio.posedetector.R
 import com.fabricio.posedetector.detection.model.PoseFrame
 import com.fabricio.posedetector.util.calculateAngle
 import kotlin.math.abs
@@ -7,6 +8,8 @@ import kotlin.math.hypot
 
 class JotaroPointPose : PoseDefinition {
     override val name = "Jotaro Point Pose"
+    override val imageRes = R.drawable.jotaro_point_pose
+    override val audioRes = R.raw.jotaro_point_pose
 
     override fun matches(frame: PoseFrame): Boolean {
         val lm = frame.landmarks

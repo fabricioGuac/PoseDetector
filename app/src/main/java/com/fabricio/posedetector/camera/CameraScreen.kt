@@ -5,17 +5,30 @@ import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
+import com.fabricio.posedetector.detection.poses.PoseDefinition
 import com.fabricio.posedetector.pose.PoseDetector
 import com.fabricio.posedetector.ui.PoseOverlay
+import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.delay
 import java.util.concurrent.Executors
 
 // Creates a traditional android camera preview and binds it to the app lifecycle so it turns on and off automatically
@@ -31,10 +44,37 @@ fun CameraScreen(poseDetector: PoseDetector){
     // Collects the latest processed frame from PoseDetector as compose state
     // recomposing the screen to update the overlay real time each new frame
     val frame by poseDetector.currentFrame.collectAsState()
+
+    // Holds the currently triggered pose
+    var activePose by remember { mutableStateOf<PoseDefinition?>(null) }
+    // Context needed to play the audio
+    val context = LocalContext.current.applicationContext
+
+
+    // Collects pose detection events emitted by PoseDetector
+    LaunchedEffect(Unit) {
+        poseDetector.poseEvent.collect { pose ->
+            // Updates activePose to trigger UI response
+            activePose = pose
+
+            // Play the audio
+            // Dynamically wait for the exact duration of the audio clip
+            val duration = poseDetector.playPoseSound(pose.audioRes)
+            delay(duration)
+
+            // Clear the image once the time is up
+            activePose = null
+        }
+    }
+
+    // Blurs the component if the pose is active
+    val blurModifier = if (activePose != null) Modifier.blur(40.dp) else Modifier
+
     // Box to allow stacking UI elements on top of each other
     Box(modifier = Modifier.fillMaxSize()){
         AndroidView(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize()
+                .then(blurModifier),
             // factory creates the traditional Android View once
             // Compose automatically provides the current Context
             factory = { ctx ->
@@ -97,7 +137,30 @@ fun CameraScreen(poseDetector: PoseDetector){
         // If a processed frame with pose landmarks is available pass it to the PoseOverlay
         // to render the skeleton on top of the preview
         frame?.let {
-            PoseOverlay(frame = it)
+            PoseOverlay(
+                frame = it,
+                modifier = blurModifier
+                )
+        }
+
+        // Dark overlay when pose is active
+        if (activePose != null) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black)
+            )
+        }
+
+        // Displays the pose image overlay when a pose is active
+        activePose?.let { pose ->
+            Image(
+                painter = painterResource(id = pose.imageRes),
+                contentDescription = pose.name,
+                modifier = Modifier
+                    .fillMaxSize(),
+                contentScale = ContentScale.Fit
+            )
         }
     }
 }

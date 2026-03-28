@@ -1,10 +1,13 @@
 package com.fabricio.posedetector.detection.poses
 
+import com.fabricio.posedetector.R
 import com.fabricio.posedetector.detection.model.PoseFrame
 import com.fabricio.posedetector.util.calculateAngle
 
 class JolyneArakiPose : PoseDefinition {
     override val name = "Jolyne Araki Pose"
+    override val imageRes = R.drawable.jolyne_araki_pose
+    override val audioRes = R.raw.jolyne_araki_pose
 
     override fun matches(frame: PoseFrame): Boolean {
         val lm = frame.landmarks

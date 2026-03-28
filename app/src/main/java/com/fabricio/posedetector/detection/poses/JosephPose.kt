@@ -1,11 +1,14 @@
 package com.fabricio.posedetector.detection.poses
 
+import com.fabricio.posedetector.R
 import com.fabricio.posedetector.detection.model.PoseFrame
 import com.fabricio.posedetector.util.calculateAngle
 import kotlin.math.abs
 
 class JosephPose : PoseDefinition {
     override val name = "Joseph Pose"
+    override val imageRes = R.drawable.joseph_pose
+    override val audioRes = R.raw.joseph_pose
 
     override fun matches(frame: PoseFrame): Boolean {
         val lm = frame.landmarks

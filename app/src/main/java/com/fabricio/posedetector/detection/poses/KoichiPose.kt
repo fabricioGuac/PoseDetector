@@ -1,11 +1,14 @@
 package com.fabricio.posedetector.detection.poses
 
+import com.fabricio.posedetector.R
 import com.fabricio.posedetector.detection.model.PoseFrame
 import com.fabricio.posedetector.util.calculateAngle
 
 class KoichiPose : PoseDefinition {
 
     override val name = "Koichi pose"
+    override val imageRes = R.drawable.koichi_pose
+    override val audioRes = R.raw.koichi_pose
 
     override fun matches(frame: PoseFrame): Boolean {
         val lm = frame.landmarks
